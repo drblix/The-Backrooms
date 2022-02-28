@@ -14,6 +14,7 @@ public class RoomGeneration : MonoBehaviour
     [SerializeField]
     private int roomsToMake = 10;
 
+    private int roomsMade = 0;
 
     private void Start()
     {
@@ -22,11 +23,6 @@ public class RoomGeneration : MonoBehaviour
 
     private IEnumerator CreateLevel()
     {
-        int roomsMade = 0;
-
-        Instantiate(rooms[Mathf.RoundToInt(Random.Range(0f, rooms.Length - 1))], Vector3.zero, Quaternion.identity);
-
-        
         while (roomsMade < roomsToMake)
         {
             SpawnPoint[] possibleLocations = FindObjectsOfType<SpawnPoint>();
@@ -36,16 +32,49 @@ public class RoomGeneration : MonoBehaviour
 
             if (!spawnPoint.Occupied)
             {
-                spawnPoint.ToggleOccupied(true);
-                Instantiate(rooms[Mathf.RoundToInt(Random.Range(0f, rooms.Length - 1))], location.position, Quaternion.identity);
-                roomsMade++;
-            }
-            else
-            {
-                Debug.LogWarning("Space occupied!");
+                CreateRoom(spawnPoint, location);
             }
 
-            yield return new WaitForSeconds(0.1f);
+            yield return new WaitForSeconds(0.05f);
         }
+    }
+
+    private void CreateRoom(SpawnPoint spawnPoint, Transform location)
+    {
+        spawnPoint.ToggleOccupied(true);
+
+        Quaternion roomRotation;
+
+        // Sets rotation variable based on spawnpoint rotation variable
+        switch (spawnPoint.Rotation)
+        {
+            case 1:
+                roomRotation = Quaternion.Euler(new Vector3(0f, 90f, 0f));
+                break;
+
+            case 2:
+                roomRotation = Quaternion.identity;
+                break;
+
+            case 3:
+                roomRotation = Quaternion.Euler(new Vector3(0f, 90f, 0f));
+                break;
+
+            case 4:
+                roomRotation = Quaternion.identity;
+                break;
+
+            default:
+                Debug.LogError("Spawn point lacks rotation declaration");
+                roomRotation = Quaternion.identity;
+                break;
+        }
+
+        GameObject newRoom = Instantiate(rooms[Mathf.RoundToInt(Random.Range(0f, rooms.Length - 1))], location.position, Quaternion.identity);
+
+        newRoom.transform.GetChild(0).rotation = roomRotation;
+        newRoom.transform.GetChild(1).rotation = roomRotation;
+    
+        roomsMade++;
     }
 }
