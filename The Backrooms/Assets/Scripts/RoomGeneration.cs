@@ -25,15 +25,32 @@ public class RoomGeneration : MonoBehaviour
     {
         while (roomsMade < roomsToMake)
         {
-            SpawnPoint[] possibleLocations = FindObjectsOfType<SpawnPoint>();
-            Transform location = possibleLocations[Mathf.RoundToInt(Random.Range(0f, possibleLocations.Length - 1))].transform;
+            List<SpawnPoint> possibleLocations = new List<SpawnPoint>();
+            SpawnPoint[] spawnPoints = FindObjectsOfType<SpawnPoint>();
 
+            for (int i = 0; i < spawnPoints.Length; i++)
+            {
+                if (!spawnPoints[i].Occupied)
+                {
+                    possibleLocations.Add(spawnPoints[i]);
+                }
+            }
+
+            if (possibleLocations.Count <= 0) { break; }
+
+            int selectedLocation = Mathf.Abs(Mathf.RoundToInt(Random.Range(0f, possibleLocations.Count - 1)));
+
+            Transform location = possibleLocations[selectedLocation].transform;
             SpawnPoint spawnPoint = location.GetComponent<SpawnPoint>();
 
             if (!spawnPoint.Occupied)
             {
                 CreateRoom(spawnPoint, location);
             }
+
+            roomsMade++;
+
+            Debug.Log(roomsMade.ToString() + " rooms created; " + roomsToMake.ToString() + " rooms left to make");
 
             yield return new WaitForSeconds(0.05f);
         }
@@ -74,7 +91,5 @@ public class RoomGeneration : MonoBehaviour
 
         newRoom.transform.GetChild(0).rotation = roomRotation;
         newRoom.transform.GetChild(1).rotation = roomRotation;
-    
-        roomsMade++;
     }
 }

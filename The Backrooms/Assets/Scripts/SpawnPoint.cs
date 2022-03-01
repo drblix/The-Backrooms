@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class SpawnPoint : MonoBehaviour
 {
-    private BoxCollider myBoxCollider;
-
     [Header("Config")]
 
     [SerializeField]
@@ -16,9 +14,21 @@ public class SpawnPoint : MonoBehaviour
     private int rotation = 1;
     public int Rotation { get { return rotation; } }
 
+    private int colliders; // Fixed issue with the 'occupied' variable being modified after room was rotated during instantiation
+
     private void Awake()
     {
-        myBoxCollider = GetComponent<BoxCollider>();
+        ToggleOccupied(false);
+
+        colliders = 0;
+    }
+
+    private void Update()
+    {
+        if (colliders <= 0)
+        {
+            ToggleOccupied(false);
+        }
     }
 
     public void ToggleOccupied(bool state)
@@ -31,30 +41,23 @@ public class SpawnPoint : MonoBehaviour
         rotation = newValue;
     }
 
-    private void OnTriggerStay(Collider other)
+    private void OnTriggerEnter(Collider other)
     {
-        switch (other.name)
+        Debug.Log(other);
+
+        if (other.CompareTag("RoomFloor"))
         {
-            case "Top":
-                UpdateRotationInt(1);
-                return;
-
-            case "Right":
-                UpdateRotationInt(2);
-                return;
-
-            case "Bottom":
-                UpdateRotationInt(3);
-                return;
-
-            case "Left":
-                UpdateRotationInt(4);
-                return;
-
-            default:
-                break;
+            ToggleOccupied(true);
+            colliders++;
         }
+    }
 
-        ToggleOccupied(true);
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("RoomFloor"))
+        {
+            ToggleOccupied(false);
+            colliders--;
+        }
     }
 }
