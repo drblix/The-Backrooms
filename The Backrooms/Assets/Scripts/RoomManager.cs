@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class RoomManager : MonoBehaviour
@@ -13,9 +11,30 @@ public class RoomManager : MonoBehaviour
     [SerializeField] [Tooltip("Rooms that possess openings on the left")]
     private GameObject[] leftRooms; // For opening type 4
 
+    [SerializeField]
+    private GameObject closedRoom;
+
+    [SerializeField]
+    private int roomsToMake = 10;
+
+    private int roomsLeft;
+
+    private void Awake()
+    {
+        roomsLeft = roomsToMake;
+    }
 
     public GameObject SelectRoom(int openingType)
     {
+        Debug.Log(roomsLeft);
+
+        if (roomsLeft <= 0)
+        {
+            return null;
+        }
+
+        roomsLeft--;
+
         switch (openingType)
         {
             case 1:
@@ -24,19 +43,24 @@ public class RoomManager : MonoBehaviour
 
             case 2:
                 int numR = Random.Range(0, rightRooms.Length - 1);
-                return topRooms[numR];
+                return rightRooms[numR];
 
             case 3:
                 int numB = Random.Range(0, bottomRooms.Length - 1);
-                return topRooms[numB];
+                return bottomRooms[numB];
 
             case 4:
                 int numL = Random.Range(0, leftRooms.Length - 1);
-                return topRooms[numL];
+                return leftRooms[numL];
 
             default:
                 Debug.LogError("Opening type out of range");
                 return null;
         }
+    }
+
+    public GameObject RequestClosedRoom()
+    {
+        return closedRoom;
     }
 }

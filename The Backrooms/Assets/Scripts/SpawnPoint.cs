@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class SpawnPoint : MonoBehaviour
@@ -12,7 +11,7 @@ public class SpawnPoint : MonoBehaviour
     private int doorOpening;
     // 1 = Opening on top; 2 = Opening on right; 3 = Opening on bottom; 4 = Opening on left
 
-    private float waitTime = 1f;
+    private readonly float waitTime = 1f;
 
     private RoomManager roomManager;
 
@@ -35,7 +34,11 @@ public class SpawnPoint : MonoBehaviour
         {
             GameObject room = roomManager.SelectRoom(doorOpening);
 
+            if (room == null) { return; }
+
             Instantiate(room, transform.position, room.transform.rotation, roomsMasterParent);
+
+            SetOccupiedState(true);
         }
         else
         {
@@ -43,10 +46,20 @@ public class SpawnPoint : MonoBehaviour
         }
     }
 
-    private void OnTriggerEnter(Collider other)
+    private IEnumerator OnTriggerEnter(Collider other)
     {
+        yield return new WaitForSeconds(0.1f); // Gives time to check collisions
+
         if (other.CompareTag("SpawnPoint"))
         {
+            if (!other.GetComponent<SpawnPoint>().Occupied && !Occupied)
+            {
+                GameObject room = roomManager.RequestClosedRoom();
+
+                Instantiate(room, transform.position, room.transform.rotation, roomsMasterParent);
+                Destroy(gameObject);
+            }
+
             SetOccupiedState(true);
         }
     }
@@ -55,4 +68,5 @@ public class SpawnPoint : MonoBehaviour
     {
         occupied = state;
     }
+
 }
