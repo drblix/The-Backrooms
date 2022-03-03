@@ -9,6 +9,8 @@ public class PlayerCamera : MonoBehaviour
 
     private float xRotation;
 
+    private bool cameraInverted = false;
+
     private void Awake()
     {
         plrCamera = transform.Find("MainCamera");
@@ -19,6 +21,7 @@ public class PlayerCamera : MonoBehaviour
     private void Update()
     {
         RotateCamera();
+        CheckInput();
     }
 
     private void RotateCamera()
@@ -26,10 +29,26 @@ public class PlayerCamera : MonoBehaviour
         float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
         float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
 
-        xRotation -= mouseY;
+        if (!cameraInverted)
+        {
+            xRotation -= mouseY;
+        }
+        else if (cameraInverted)
+        {
+            xRotation += mouseY;
+        }
+
         xRotation = Mathf.Clamp(xRotation, -70f, 70f);
 
         plrCamera.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
         transform.Rotate(Vector3.up * mouseX);
+    }
+
+    private void CheckInput()
+    {
+        if (Input.GetKeyDown(KeyCode.I))
+        {
+            cameraInverted = !cameraInverted;
+        }
     }
 }
