@@ -38,6 +38,13 @@ public class PlayerMovement : MonoBehaviour
 
     private CameraBobbing cameraBobbing;
 
+    [Header("Footsteps")]
+
+    [SerializeField]
+    private AudioSource footStepsSource;
+    [SerializeField]
+    private AudioClip[] stepClips;
+
     private void Awake()
     {
         controller = GetComponent<CharacterController>();
@@ -57,6 +64,7 @@ public class PlayerMovement : MonoBehaviour
         HandleSprint();
         RechargeSprint();
         CheckMovement();
+        Footsteps();
     }
 
     private void PlayerMove()
@@ -137,6 +145,25 @@ public class PlayerMovement : MonoBehaviour
         }
 
         oldPos = transform.position;
+    }
+
+    private void Footsteps()
+    {
+        if (isMoving && !footStepsSource.isPlaying)
+        {
+            if (sprinting)
+            {
+                footStepsSource.clip = stepClips[Random.Range(0, stepClips.Length - 1)];
+                footStepsSource.pitch = 1.4f;
+                footStepsSource.Play();
+            }
+            else
+            {
+                footStepsSource.clip = stepClips[Random.Range(0, stepClips.Length - 1)];
+                footStepsSource.pitch = 1f;
+                footStepsSource.Play();
+            }
+        }
     }
 
     private void UpdateStaminaBar()

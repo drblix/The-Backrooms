@@ -27,7 +27,7 @@ public class RoomManager : MonoBehaviour
 
     public GameObject SelectRoom(int openingType)
     {
-        Debug.Log(roomsLeft);
+        Debug.Log(roomsLeft + " rooms left to create!"); ;
 
         if (roomsLeft <= 0)
         {
