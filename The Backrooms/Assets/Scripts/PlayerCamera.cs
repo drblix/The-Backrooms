@@ -14,7 +14,7 @@ public class PlayerCamera : MonoBehaviour
 
     private void Awake()
     {
-        plrCamera = transform.Find("MainCamera");
+        plrCamera = transform.Find("Head").Find("MainCamera");
 
         Cursor.lockState = CursorLockMode.Locked;
     }

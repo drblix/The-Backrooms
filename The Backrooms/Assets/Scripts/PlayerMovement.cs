@@ -11,6 +11,9 @@ public class PlayerMovement : MonoBehaviour
     private float speed = 5f;
     private float originalSpeed;
 
+    private bool isMoving = false;
+    private Vector3 oldPos;
+
     [Header("Sprint Config")]
 
     [SerializeField] [Range(1f, 50f)]
@@ -30,13 +33,21 @@ public class PlayerMovement : MonoBehaviour
 
     [SerializeField]
     private Gradient staminaBarColor;
+    [SerializeField]
+    private GameObject tiredText;
+
+    private CameraBobbing cameraBobbing;
 
     private void Awake()
     {
         controller = GetComponent<CharacterController>();
+        cameraBobbing = FindObjectOfType<CameraBobbing>();
+
+        tiredText.SetActive(false);
 
         originalSpeed = speed;
         currentStamina = maxStamina;
+        oldPos = new Vector3(0f, 0f, 0f);
         UpdateStaminaBar();
     }
 
@@ -45,6 +56,7 @@ public class PlayerMovement : MonoBehaviour
         PlayerMove();
         HandleSprint();
         RechargeSprint();
+        CheckMovement();
     }
 
     private void PlayerMove()
@@ -59,9 +71,11 @@ public class PlayerMovement : MonoBehaviour
 
     private void HandleSprint()
     {
-        if (Input.GetKey(KeyCode.LeftShift) && currentStamina > 0f && canSprint)
+        if (Input.GetKey(KeyCode.LeftShift) && currentStamina > 0f && canSprint && isMoving)
         {
             sprinting = true;
+            cameraBobbing.SetMovingState(true, 7f);
+
             speed = sprintSpeed;
 
             currentStamina -= 0.35f;
@@ -97,10 +111,32 @@ public class PlayerMovement : MonoBehaviour
     private IEnumerator PauseSprint()
     {
         canSprint = false;
+        tiredText.SetActive(true);
 
         yield return new WaitUntil(() => currentStamina == maxStamina);
 
         canSprint = true;
+        tiredText.SetActive(false);
+    }
+
+    private void CheckMovement()
+    {
+        if (transform.position != oldPos)
+        {
+            isMoving = true;
+
+            if (!sprinting)
+            {
+                cameraBobbing.SetMovingState(true, 5f);
+            }
+        }
+        else
+        {
+            isMoving = false; 
+            cameraBobbing.SetMovingState(false, 5f);
+        }
+
+        oldPos = transform.position;
     }
 
     private void UpdateStaminaBar()
