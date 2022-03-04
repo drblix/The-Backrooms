@@ -1,5 +1,7 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -16,11 +18,15 @@ public class PlayerMovement : MonoBehaviour
 
     [SerializeField]
     private Image staminaBar;
+    [SerializeField]
+    private TextMeshProUGUI staminaText;
 
     private float maxStamina = 100f;
+    [SerializeField]
     private float currentStamina;
 
     private bool canSprint = true;
+    private bool sprinting = false;
 
     [SerializeField]
     private Gradient staminaBarColor;
@@ -38,6 +44,7 @@ public class PlayerMovement : MonoBehaviour
     {
         PlayerMove();
         HandleSprint();
+        RechargeSprint();
     }
 
     private void PlayerMove()
@@ -54,12 +61,46 @@ public class PlayerMovement : MonoBehaviour
     {
         if (Input.GetKey(KeyCode.LeftShift) && currentStamina > 0f && canSprint)
         {
+            sprinting = true;
             speed = sprintSpeed;
+
+            currentStamina -= 0.35f;
+            UpdateStaminaBar();
         }
         else
         {
+            sprinting = false;
             speed = originalSpeed;
         }
+    }
+
+    private void RechargeSprint()
+    {
+        if (!sprinting && currentStamina < maxStamina)
+        {
+            currentStamina += 0.2f;
+        }
+
+        if (currentStamina < 0.05f)
+        {
+            StartCoroutine(PauseSprint());
+        }
+
+        if (currentStamina > maxStamina)
+        {
+            currentStamina = 100f;
+        }
+
+        UpdateStaminaBar();
+    }
+
+    private IEnumerator PauseSprint()
+    {
+        canSprint = false;
+
+        yield return new WaitUntil(() => currentStamina == maxStamina);
+
+        canSprint = true;
     }
 
     private void UpdateStaminaBar()
@@ -69,5 +110,6 @@ public class PlayerMovement : MonoBehaviour
 
         staminaBar.fillAmount = newFill;
         staminaBar.color = newColor;
+        staminaText.color = newColor;
     }
 }

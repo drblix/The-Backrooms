@@ -11,7 +11,7 @@ public class SpawnPoint : MonoBehaviour
     private int doorOpening;
     // 1 = Opening on top; 2 = Opening on right; 3 = Opening on bottom; 4 = Opening on left
 
-    private readonly float waitTime = 1f;
+    private readonly float waitTime = 0.25f; // Lowest possible wait time is 0.25f; any lower time and collisions have no time to register
 
     private RoomManager roomManager;
 

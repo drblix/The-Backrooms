@@ -14,7 +14,7 @@ public class RoomManager : MonoBehaviour
     [SerializeField]
     private GameObject closedRoom;
 
-    [SerializeField]
+    [SerializeField] [Min(10)]
     private int roomsToMake = 10;
 
     private int roomsLeft;

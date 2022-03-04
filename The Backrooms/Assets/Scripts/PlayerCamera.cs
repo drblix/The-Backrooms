@@ -11,6 +11,7 @@ public class PlayerCamera : MonoBehaviour
 
     private bool cameraInverted = false;
 
+
     private void Awake()
     {
         plrCamera = transform.Find("MainCamera");
