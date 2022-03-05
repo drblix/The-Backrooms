@@ -26,6 +26,11 @@ public class CameraBobbing : MonoBehaviour
 
     private void Update()
     {
+        HeadBob();
+    }
+
+    private void HeadBob()
+    {
         if (!isMoving)
         {
             walkingTime = 0f;

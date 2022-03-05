@@ -2,6 +2,8 @@ using UnityEngine;
 
 public class PlayerCamera : MonoBehaviour
 {
+    private UIManager uiManager;
+
     [SerializeField] [Range(50f, 500f)]
     private float mouseSensitivity = 100f;
 
@@ -14,6 +16,7 @@ public class PlayerCamera : MonoBehaviour
 
     private void Awake()
     {
+        uiManager = FindObjectOfType<UIManager>();
         plrCamera = transform.Find("Head").Find("MainCamera");
 
         Cursor.lockState = CursorLockMode.Locked;
@@ -21,8 +24,10 @@ public class PlayerCamera : MonoBehaviour
 
     private void Update()
     {
-        RotateCamera();
-        CheckInput();
+        if (uiManager.GameLoaded)
+        {
+            RotateCamera();
+        }
     }
 
     private void RotateCamera()
@@ -45,11 +50,8 @@ public class PlayerCamera : MonoBehaviour
         transform.Rotate(Vector3.up * mouseX);
     }
 
-    private void CheckInput()
+    public void ToggleInversion(bool state)
     {
-        if (Input.GetKeyDown(KeyCode.I))
-        {
-            cameraInverted = !cameraInverted;
-        }
+        cameraInverted = state;
     }
 }

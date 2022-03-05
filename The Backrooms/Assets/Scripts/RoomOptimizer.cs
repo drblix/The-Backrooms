@@ -34,7 +34,6 @@ public class RoomOptimizer : MonoBehaviour
         if (other.CompareTag("Optimizer"))
         {
             ToggleVisibility(false);
-            Debug.Log("Disable");
         }
     }
 }

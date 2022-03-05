@@ -22,6 +22,7 @@ public class SpawnPoint : MonoBehaviour
     {
         roomManager = FindObjectOfType<RoomManager>();
         roomsMasterParent = GameObject.FindGameObjectWithTag("MasterRoomParent").transform;
+        closedRoomsParent = GameObject.FindGameObjectWithTag("ClosedRoomParent").transform;
     }
 
     private void Start()
@@ -53,7 +54,7 @@ public class SpawnPoint : MonoBehaviour
             {
                 GameObject room = roomManager.RequestClosedRoom();
 
-                Instantiate(room, transform.position, room.transform.rotation, roomsMasterParent);
+                Instantiate(room, transform.position, room.transform.rotation, closedRoomsParent);
                 Destroy(gameObject);
             }
 

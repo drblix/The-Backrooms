@@ -1,22 +1,23 @@
 using UnityEngine;
-using UnityEngine.Rendering;
 
 public class RoomManager : MonoBehaviour
 {
-    [SerializeField] [Tooltip("Rooms that possess openings on the top")]
-    private GameObject[] topRooms; // For opening type 1
-    [SerializeField] [Tooltip("Rooms that possess openings on the right")]
-    private GameObject[] rightRooms; // For opening type 2
+    private UIManager uiManager;
+
     [SerializeField] [Tooltip("Rooms that possess openings on the bottom")]
-    private GameObject[] bottomRooms; // For opening type 3
+    private GameObject[] topRooms; // For opening type 1
     [SerializeField] [Tooltip("Rooms that possess openings on the left")]
+    private GameObject[] rightRooms; // For opening type 2
+    [SerializeField] [Tooltip("Rooms that possess openings on the top")]
+    private GameObject[] bottomRooms; // For opening type 3
+    [SerializeField] [Tooltip("Rooms that possess openings on the right")]
     private GameObject[] leftRooms; // For opening type 4
 
     [SerializeField]
     private GameObject closedRoom;
 
-    [SerializeField] [Min(10)]
-    private int roomsToMake = 10;
+    [SerializeField] [Min(50)]
+    private int roomsToMake;
 
     private int roomsLeft;
 
@@ -24,6 +25,9 @@ public class RoomManager : MonoBehaviour
 
     private void Awake()
     {
+        uiManager = FindObjectOfType<UIManager>();
+
+        roomsToMake = MainMenu.enteredRoomsToGenerate;
         roomsLeft = roomsToMake;
     }
 
@@ -41,6 +45,8 @@ public class RoomManager : MonoBehaviour
         Debug.Log(roomsLeft + " rooms left to create!");
 
         roomsLeft--;
+
+        uiManager.UpdateLoadingBar(roomsToMake - roomsLeft, roomsToMake);
 
         switch (openingType)
         {
@@ -74,6 +80,8 @@ public class RoomManager : MonoBehaviour
     private void RoomsFinished()
     {
         Debug.Log("Rooms have finished loading!");
+
+        uiManager.FinishedLoading();
         // Stuff to do when rooms finished loading
     }
 }

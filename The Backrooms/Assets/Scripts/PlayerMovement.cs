@@ -6,6 +6,9 @@ using TMPro;
 public class PlayerMovement : MonoBehaviour
 {
     private CharacterController controller;
+    private UIManager uiManager;
+
+    private bool gameLoaded = false;
 
     [SerializeField] [Range(1f, 50f)]
     private float speed = 5f;
@@ -47,6 +50,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void Awake()
     {
+        uiManager = FindObjectOfType<UIManager>();
         controller = GetComponent<CharacterController>();
         cameraBobbing = FindObjectOfType<CameraBobbing>();
 
@@ -60,11 +64,14 @@ public class PlayerMovement : MonoBehaviour
 
     private void Update()
     {
-        PlayerMove();
-        HandleSprint();
-        RechargeSprint();
-        CheckMovement();
-        Footsteps();
+        if (uiManager.GameLoaded)
+        {
+            PlayerMove();
+            HandleSprint();
+            RechargeSprint();
+            CheckMovement();
+            Footsteps();
+        }
     }
 
     private void PlayerMove()
