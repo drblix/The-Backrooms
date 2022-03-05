@@ -20,6 +20,8 @@ public class RoomManager : MonoBehaviour
 
     private int roomsLeft;
 
+    private bool roomsDoneLoading = false;
+
     private void Awake()
     {
         roomsLeft = roomsToMake;
@@ -27,12 +29,16 @@ public class RoomManager : MonoBehaviour
 
     public GameObject SelectRoom(int openingType)
     {
-        Debug.Log(roomsLeft + " rooms left to create!"); ;
+        if (roomsDoneLoading) { return null; }
 
         if (roomsLeft <= 0)
         {
+            roomsDoneLoading = true;
+            RoomsFinished();
             return null;
         }
+
+        Debug.Log(roomsLeft + " rooms left to create!");
 
         roomsLeft--;
 
@@ -63,5 +69,11 @@ public class RoomManager : MonoBehaviour
     public GameObject RequestClosedRoom()
     {
         return closedRoom;
+    }
+
+    private void RoomsFinished()
+    {
+        Debug.Log("Rooms have finished loading!");
+        // Stuff to do when rooms finished loading
     }
 }

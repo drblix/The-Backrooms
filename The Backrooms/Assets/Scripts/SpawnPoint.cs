@@ -16,6 +16,7 @@ public class SpawnPoint : MonoBehaviour
     private RoomManager roomManager;
 
     private Transform roomsMasterParent;
+    private Transform closedRoomsParent;
 
     private void Awake()
     {
@@ -40,18 +41,14 @@ public class SpawnPoint : MonoBehaviour
 
             SetOccupiedState(true);
         }
-        else
-        {
-            Debug.Log("Space occupied");
-        }
     }
 
     private IEnumerator OnTriggerEnter(Collider other)
     {
-        yield return new WaitForSeconds(0.1f); // Gives time to check collisions
-
         if (other.CompareTag("SpawnPoint"))
         {
+            yield return new WaitForSeconds(0.1f); // Gives time to check collisions
+
             if (!other.GetComponent<SpawnPoint>().Occupied && !Occupied)
             {
                 GameObject room = roomManager.RequestClosedRoom();
