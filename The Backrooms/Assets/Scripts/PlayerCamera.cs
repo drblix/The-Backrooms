@@ -8,6 +8,8 @@ public class PlayerCamera : MonoBehaviour
     private float mouseSensitivity = 100f;
 
     private Transform plrCamera;
+    [SerializeField]
+    private Transform eventCam;
 
     private float xRotation;
 
@@ -47,6 +49,8 @@ public class PlayerCamera : MonoBehaviour
         xRotation = Mathf.Clamp(xRotation, -70f, 70f);
 
         plrCamera.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
+        eventCam.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
+
         transform.Rotate(Vector3.up * mouseX);
     }
 

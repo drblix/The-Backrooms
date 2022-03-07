@@ -5,7 +5,9 @@ public class CameraBobbing : MonoBehaviour
     [SerializeField]
     private Transform headTransform;
     [SerializeField]
-    private Transform cameraTransform;
+    private Transform plrCamTransform;
+    [SerializeField]
+    private Transform eventCamTransform;
 
     [Header("Bobbing Config")]
 
@@ -42,11 +44,17 @@ public class CameraBobbing : MonoBehaviour
 
         targetCamPos = headTransform.position + CalculateOffset(walkingTime);
 
-        cameraTransform.position = Vector3.Lerp(cameraTransform.position, targetCamPos, bobSmoothing);
+        plrCamTransform.position = Vector3.Lerp(plrCamTransform.position, targetCamPos, bobSmoothing);
+        eventCamTransform.position = Vector3.Lerp(eventCamTransform.position, targetCamPos, bobSmoothing);
 
-        if ((cameraTransform.position - targetCamPos).magnitude <= 0.001f)
+        if ((plrCamTransform.position - targetCamPos).magnitude <= 0.001f)
         {
-            cameraTransform.position = targetCamPos;
+            plrCamTransform.position = targetCamPos;
+        }
+
+        if ((eventCamTransform.position - targetCamPos).magnitude <= 0.001f)
+        {
+            eventCamTransform.position = targetCamPos;
         }
     }
 

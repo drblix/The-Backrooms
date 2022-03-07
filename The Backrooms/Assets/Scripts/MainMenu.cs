@@ -5,6 +5,8 @@ using TMPro;
 public class MainMenu : MonoBehaviour
 {
     private Transform plrCamera;
+    [SerializeField]
+    private Transform eventCam;
 
     private GameObject mainScreen;
     private GameObject playScreen;
@@ -43,6 +45,7 @@ public class MainMenu : MonoBehaviour
     {
         Vector3 rotateDelta = rotateSpeed * Time.deltaTime * new Vector3(0f, 1f, 0f);
         plrCamera.Rotate(rotateDelta);
+        eventCam.Rotate(rotateDelta);
     }
 
     public void PlayScreenToggle()
