@@ -53,7 +53,16 @@ public class MainMenu : MonoBehaviour
 
     public void GenerateButtonPressed()
     {
-        int enteredRooms = System.Convert.ToInt32(inputField.text);
+        int enteredRooms;
+        try
+        {
+            enteredRooms = System.Convert.ToInt32(inputField.text);
+        }
+        catch (System.Exception)
+        {
+            Debug.LogError("Input not an integer");
+            return;
+        }
 
         if (enteredRooms < minimumRooms || enteredRooms > maximumRooms) { return; }
 
