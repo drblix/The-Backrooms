@@ -12,6 +12,7 @@ public class MainMenu : MonoBehaviour
     [SerializeField]
     private TMP_InputField inputField;
 
+    [Range(50, 1000)]
     public static int enteredRoomsToGenerate;
 
     [SerializeField] [Min(2f)]

@@ -11,7 +11,7 @@ public class PlayerCamera : MonoBehaviour
 
     private float xRotation;
 
-    private bool cameraInverted = false;
+    public static bool cameraInverted = false;
 
 
     private void Awake()

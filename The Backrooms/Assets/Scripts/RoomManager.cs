@@ -42,8 +42,6 @@ public class RoomManager : MonoBehaviour
             return null;
         }
 
-        Debug.Log(roomsLeft + " rooms left to create!");
-
         roomsLeft--;
 
         uiManager.UpdateLoadingBar(roomsToMake - roomsLeft, roomsToMake);
@@ -82,6 +80,5 @@ public class RoomManager : MonoBehaviour
         Debug.Log("Rooms have finished loading!");
 
         uiManager.FinishedLoading();
-        // Stuff to do when rooms finished loading
     }
 }

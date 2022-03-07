@@ -24,6 +24,8 @@ public class UIManager : MonoBehaviour
         plrStats = transform.GetChild(0).gameObject;
         loadingScreen = transform.GetChild(1).gameObject;
         pauseScreen = transform.GetChild(2).gameObject;
+
+        pauseScreen.transform.GetChild(2).GetComponent<Toggle>().isOn = PlayerCamera.cameraInverted;
     }
 
     private void Update()
