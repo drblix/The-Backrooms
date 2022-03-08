@@ -9,7 +9,7 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: Light
   m_Shader: {fileID: 46, guid: 0000000000000000f000000000000000, type: 0}
-  m_ShaderKeywords: _EMISSION
+  m_ShaderKeywords: _DETAIL_MULX2 _EMISSION
   m_LightmapFlags: 2
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -24,7 +24,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DetailAlbedoMap:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: e53d3e1192f678a4f8596cb158fef96f, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DetailMask:
@@ -75,5 +75,5 @@ Material:
     - _ZWrite: 1
     m_Colors:
     - _Color: {r: 0.9977452, g: 1, b: 0.5896226, a: 1}
-    - _EmissionColor: {r: 0.7776848, g: 0.8490566, b: 0.31639373, a: 1}
+    - _EmissionColor: {r: 0.8509804, g: 0.8337204, b: 0.3176471, a: 1}
   m_BuildTextureStacks: []
