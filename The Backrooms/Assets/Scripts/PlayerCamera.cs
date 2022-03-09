@@ -75,9 +75,12 @@ public class PlayerCamera : MonoBehaviour
 
             if (Physics.Raycast(ray, out RaycastHit hitInfo, rayDistance, itemsLayer))
             {
-                GameObject obj = hitInfo.collider.gameObject;
+                string obj = hitInfo.collider.name;
 
-                invManager.PickupItem(obj);
+                if (invManager.PickupItem(obj))
+                {
+                    Destroy(hitInfo.collider.gameObject);
+                }
             }
         }
     }

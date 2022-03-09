@@ -37,9 +37,17 @@ public class InventoryManager : MonoBehaviour
     [SerializeField]
     private Slots selectedSlot;
 
-    [SerializeField]
-    private List<Item> inventory = new List<Item>(3);
-    // 0 = Slot 1; 1 = Slot 2; 2 = Slot 3
+    private string[] inventory = new string[3]
+    {
+        "null",
+        "null",
+        "null",
+    };
+    // 1 = Slot 1; 2 = Slot 2; 3 = Slot 3
+
+    private bool slot1Occupied = false;
+    private bool slot2Occupied = false;
+    private bool slot3Occupied = false;
 
     private void Awake()
     {
@@ -53,6 +61,8 @@ public class InventoryManager : MonoBehaviour
 
         slot1.GetComponent<Image>().color = selectionColor;
         selectedSlot = Slots.Slot1;
+
+        Debug.Log(inventory.Length);
     }
 
     private void Update()
@@ -83,37 +93,40 @@ public class InventoryManager : MonoBehaviour
         }
     }
 
-    public void PickupItem(GameObject item)
+    public bool PickupItem(string item)
     {
-        Debug.Log(item.name);
+        Image currentSlotIcon;
 
-        if (inventory.Count < inventory.Capacity)
+        switch (selectedSlot)
         {
-            Debug.Log(inventory.Count);
+            case Slots.Slot1:
+                if (slot1Occupied) { return false; }
+                currentSlotIcon = slot1Icon;
+                slot1Occupied = true;
+                break;
 
-            switch (selectedSlot)
-            {
-                case Slots.Slot1:
-                    if (!inventory[1])
-                    {
-                        inventory.Insert(1, item.GetComponent<Item>());
-                    }
-                    break;
+            case Slots.Slot2:
+                if (slot2Occupied) { return false; }
+                currentSlotIcon = slot2Icon;
+                slot2Occupied = true;
+                break;
 
-                case Slots.Slot2:
-                    if (!inventory[2])
-                    {
-                        inventory.Insert(2, item.GetComponent<Item>());
-                    }
-                    break;
+            case Slots.Slot3:
+                if (slot3Occupied) { return false; }
+                currentSlotIcon = slot3Icon;
+                slot3Occupied = true;
+                break;
 
-                case Slots.Slot3:
-                    if (!inventory[3])
-                    {
-                        inventory.Insert(3, item.GetComponent<Item>());
-                    }
-                    break;
-            }
+            default:
+                Debug.LogError("No selected slot");
+                return false;
+        }
+
+        switch (item)
+        {
+            case "Soda":
+                
+                break;
         }
     }
 
