@@ -1,4 +1,5 @@
 using UnityEngine;
+using TMPro;
 
 public class PlayerCamera : MonoBehaviour
 {
@@ -22,6 +23,9 @@ public class PlayerCamera : MonoBehaviour
     [SerializeField] [Min(1f)]
     private float rayDistance;
 
+    [SerializeField]
+    private TextMeshProUGUI cursorItemDisplay;
+
     private int itemsLayer;
 
     private void Awake()
@@ -41,6 +45,7 @@ public class PlayerCamera : MonoBehaviour
         {
             RotateCamera();
             PlayerRaycast();
+            ItemRaycast();
         }
     }
 
@@ -79,6 +84,26 @@ public class PlayerCamera : MonoBehaviour
                 ItemInfo info = hitInfo.collider.GetComponent<ItemInfo>();
 
                 invManager.PickupItem(info);
+            }
+        }
+    }
+
+    private void ItemRaycast()
+    {
+        if (!uiManager.GamePaused)
+        {
+            Ray ray = new Ray(plrCamera.position, plrCamera.TransformDirection(Vector3.forward));
+
+            if (Physics.Raycast(ray, out RaycastHit hitInfo, rayDistance, itemsLayer))
+            {
+                ItemInfo info = hitInfo.collider.GetComponent<ItemInfo>();
+
+                cursorItemDisplay.gameObject.SetActive(true);
+                cursorItemDisplay.text = info.ObjName;
+            }
+            else
+            {
+                cursorItemDisplay.gameObject.SetActive(false);
             }
         }
     }

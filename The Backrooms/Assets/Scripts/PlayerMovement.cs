@@ -32,6 +32,8 @@ public class PlayerMovement : MonoBehaviour
     private bool canSprint = true;
     private bool sprinting = false;
 
+    private bool infStamina = false;
+
     [SerializeField]
     private Gradient staminaBarColor;
     [SerializeField]
@@ -84,14 +86,18 @@ public class PlayerMovement : MonoBehaviour
 
     private void HandleSprint()
     {
-        if (Input.GetKey(KeyCode.LeftShift) && currentStamina > 0f && canSprint && isMoving)
+        if (Input.GetKey(KeyCode.LeftShift) && currentStamina > 0f && canSprint && isMoving || Input.GetKey(KeyCode.LeftShift) && infStamina)
         {
             sprinting = true;
             cameraBobbing.SetMovingState(true, 7f);
 
             speed = sprintSpeed;
 
-            currentStamina -= 0.35f;
+            if (!infStamina)
+            {
+                currentStamina -= 0.35f;
+            }
+
             UpdateStaminaBar();
         }
         else
@@ -103,6 +109,8 @@ public class PlayerMovement : MonoBehaviour
 
     private void RechargeSprint()
     {
+        if (uiManager.GamePaused) { return; }
+
         if (!sprinting && currentStamina < maxStamina)
         {
             currentStamina += 0.2f;
@@ -130,6 +138,22 @@ public class PlayerMovement : MonoBehaviour
 
         canSprint = true;
         tiredText.SetActive(false);
+    }
+
+    public IEnumerator StaminaPowerup(float duration)
+    {
+        infStamina = true;
+        currentStamina = maxStamina;
+
+        staminaBar.fillAmount = 1f;
+
+        staminaBar.color = new Color(0f, 255f, 0f, 255f);
+        staminaText.color = new Color(0f, 255f, 0f, 255f);
+
+        yield return new WaitForSeconds(duration);
+
+        infStamina = false;
+        UpdateStaminaBar();
     }
 
     private void CheckMovement()
@@ -173,11 +197,14 @@ public class PlayerMovement : MonoBehaviour
 
     private void UpdateStaminaBar()
     {
-        float newFill = currentStamina / maxStamina;
-        Color newColor = staminaBarColor.Evaluate(newFill);
+        if (!infStamina)
+        {
+            float newFill = currentStamina / maxStamina;
+            Color newColor = staminaBarColor.Evaluate(newFill);
 
-        staminaBar.fillAmount = newFill;
-        staminaBar.color = newColor;
-        staminaText.color = newColor;
+            staminaBar.fillAmount = newFill;
+            staminaBar.color = newColor;
+            staminaText.color = newColor;
+        }
     }
 }

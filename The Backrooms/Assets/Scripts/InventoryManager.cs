@@ -31,6 +31,9 @@ public class InventoryManager : MonoBehaviour
         false,
     };
 
+    [SerializeField]
+    private Transform itemDropArea;
+
     private readonly string[] items = new string[]
     {
         "Soda",
@@ -84,6 +87,11 @@ public class InventoryManager : MonoBehaviour
         {
             UseItem();
         }
+
+        if (Input.GetKeyDown(KeyCode.G))
+        {
+            DropItem();
+        }
     }
 
     public void PickupItem(ItemInfo itemInfo)
@@ -122,27 +130,8 @@ public class InventoryManager : MonoBehaviour
 
     private void UseItem()
     {
-        int slotNum;
+        int slotNum = RetrieveCurrentIndex();
         Debug.Log(currentSlot);
-
-        switch (currentSlot)
-        {
-            case Slots.Slot01:
-                slotNum = 0;
-                break;
-
-            case Slots.Slot02:
-                slotNum = 1;
-                break;
-
-            case Slots.Slot03:
-                slotNum = 2;
-                break;
-
-            default:
-                Debug.LogError("No variable matching");
-                return;
-        }
 
         if (!slotOccupied[slotNum]) { Debug.LogWarning("No item in slot"); return; }
 
@@ -150,7 +139,9 @@ public class InventoryManager : MonoBehaviour
         {
             case "Soda":
                 Debug.Log("Use Soda");
-                RemoveItem(slotNum);
+                PlayerMovement plrMovement = FindObjectOfType<PlayerMovement>();
+                plrMovement.StartCoroutine(plrMovement.StaminaPowerup(4f));
+                RemoveItem(slotNum, false);
                 break;
 
             case "Candy Bar":
@@ -159,14 +150,32 @@ public class InventoryManager : MonoBehaviour
         }
     }
 
-    private void RemoveItem(int index)
+    private void RemoveItem(int index, bool fromDropItem)
     {
         inventory[index] = "null";
         slots[index].Find("Icon").GetComponent<Image>().sprite = null;
         slots[index].Find("Icon").GetComponent<Image>().color = new Color(255f, 255f, 255f, 0f);
 
-        Destroy(slots[index].Find("ItemHolder").GetChild(0).gameObject);
+        if (!fromDropItem)
+        {
+            Destroy(slots[index].Find("ItemHolder").GetChild(0).gameObject);
+        }
+
         slotOccupied[index] = false;
+    }
+
+    private void DropItem()
+    {
+        int index = RetrieveCurrentIndex();
+
+        if (!slotOccupied[index]) { return; }
+
+        RemoveItem(index, true);
+
+        GameObject item = slots[index].Find("ItemHolder").GetChild(0).gameObject;
+        item.transform.parent = null;
+        item.transform.position = itemDropArea.position;
+        item.SetActive(true);
     }
 
     private void UpdateSelection(string slot)
@@ -193,6 +202,25 @@ public class InventoryManager : MonoBehaviour
                 slots[1].GetComponent<Image>().color = defaultColor;
                 slots[2].GetComponent<Image>().color = selectionColor;
                 break;
+        }
+    }
+
+    private int RetrieveCurrentIndex()
+    {
+        switch (currentSlot)
+        {
+            case Slots.Slot01:
+                return 0;
+
+            case Slots.Slot02:
+                return 1;
+
+            case Slots.Slot03:
+                return 2;
+
+            default:
+                Debug.LogError("No variable matching");
+                return 0;
         }
     }
 }
