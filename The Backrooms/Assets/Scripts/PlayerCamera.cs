@@ -28,6 +28,7 @@ public class PlayerCamera : MonoBehaviour
     {
         uiManager = FindObjectOfType<UIManager>();
         invManager = FindObjectOfType<InventoryManager>();
+
         plrCamera = transform.Find("Head").Find("MainCamera");
         itemsLayer = LayerMask.GetMask("Items");
 
@@ -39,7 +40,7 @@ public class PlayerCamera : MonoBehaviour
         if (uiManager.GameLoaded)
         {
             RotateCamera();
-            Raycast();
+            PlayerRaycast();
         }
     }
 
@@ -65,9 +66,9 @@ public class PlayerCamera : MonoBehaviour
         transform.Rotate(Vector3.up * mouseX);
     }
 
-    private void Raycast()
+    private void PlayerRaycast()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0) && !uiManager.GamePaused)
         {
             Ray ray = new Ray(plrCamera.position, plrCamera.TransformDirection(Vector3.forward));
 
@@ -75,12 +76,9 @@ public class PlayerCamera : MonoBehaviour
 
             if (Physics.Raycast(ray, out RaycastHit hitInfo, rayDistance, itemsLayer))
             {
-                string obj = hitInfo.collider.name;
+                ItemInfo info = hitInfo.collider.GetComponent<ItemInfo>();
 
-                if (invManager.PickupItem(obj))
-                {
-                    Destroy(hitInfo.collider.gameObject);
-                }
+                invManager.PickupItem(info);
             }
         }
     }

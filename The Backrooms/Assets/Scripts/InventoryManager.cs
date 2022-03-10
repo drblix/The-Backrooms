@@ -1,23 +1,8 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class InventoryManager : MonoBehaviour
 {
-    [Header("Slot References")]
-
-    [SerializeField]
-    private Transform slot1;
-    [SerializeField]
-    private Transform slot2;
-    [SerializeField]
-    private Transform slot3;
-
-    private Image slot1Icon;
-    private Image slot2Icon;
-    private Image slot3Icon;
-
     [Header("Colors")]
 
     [SerializeField]
@@ -25,18 +10,12 @@ public class InventoryManager : MonoBehaviour
     [SerializeField]
     private Color defaultColor;
 
-    private enum Slots
-    {
-        Slot1,
-        Slot2,
-        Slot3
-    }
-
     [Header("Config")]
 
     [SerializeField]
-    private Slots selectedSlot;
+    private Transform[] slots = new Transform[3];
 
+    [SerializeField]
     private string[] inventory = new string[3]
     {
         "null",
@@ -44,23 +23,37 @@ public class InventoryManager : MonoBehaviour
         "null",
     };
     // 1 = Slot 1; 2 = Slot 2; 3 = Slot 3
+    [SerializeField]
+    private bool[] slotOccupied = new bool[3]
+    {
+        false,
+        false,
+        false,
+    };
 
-    private bool slot1Occupied = false;
-    private bool slot2Occupied = false;
-    private bool slot3Occupied = false;
+    private readonly string[] items = new string[]
+    {
+        "Soda",
+        "Candy Bar",
+    };
+
+    private enum Slots
+    {
+        Slot01,
+        Slot02,
+        Slot03
+    }
+
+    private Slots currentSlot = Slots.Slot01;
+
+    //// ^^^ Variables ^^^ ////
 
     private void Awake()
     {
-        slot1Icon = slot1.GetChild(0).GetComponent<Image>();
-        slot2Icon = slot2.GetChild(0).GetComponent<Image>();
-        slot3Icon = slot3.GetChild(0).GetComponent<Image>();
-
-        slot1Icon.color = new Color(255f, 255f, 255f, 0f);
-        slot2Icon.color = new Color(255f, 255f, 255f, 0f);
-        slot3Icon.color = new Color(255f, 255f, 255f, 0f);
-
-        slot1.GetComponent<Image>().color = selectionColor;
-        selectedSlot = Slots.Slot1;
+        slots[0].GetComponent<Image>().color = selectionColor;
+        slots[0].Find("Icon").GetComponent<Image>().color = new Color(255f, 255f, 255f, 0f);
+        slots[1].Find("Icon").GetComponent<Image>().color = new Color(255f, 255f, 255f, 0f);
+        slots[2].Find("Icon").GetComponent<Image>().color = new Color(255f, 255f, 255f, 0f);
 
         Debug.Log(inventory.Length);
     }
@@ -89,45 +82,91 @@ public class InventoryManager : MonoBehaviour
 
         if (Input.GetMouseButtonDown(1))
         {
-            Debug.Log("Use item");
+            UseItem();
         }
     }
 
-    public bool PickupItem(string item)
+    public void PickupItem(ItemInfo itemInfo)
     {
-        Image currentSlotIcon;
+        bool itemExists = false;
 
-        switch (selectedSlot)
+        // Checks if provided item exists
+        for (int i = 0; i < items.Length; i++)
         {
-            case Slots.Slot1:
-                if (slot1Occupied) { return false; }
-                currentSlotIcon = slot1Icon;
-                slot1Occupied = true;
+            if (itemInfo.ObjName == items[i])
+            {
+                itemExists = true;
+            }
+        }
+
+        if (!itemExists) { Debug.LogWarning("Supplied item does not exist"); return; }
+
+        for (int i = 0; i < inventory.Length; i++)
+        {
+            if (!slotOccupied[i])
+            {
+                inventory[i] = itemInfo.ObjName;
+                itemInfo.gameObject.SetActive(false);
+                itemInfo.transform.parent = slots[i].Find("ItemHolder");
+
+                slots[i].Find("Icon").GetComponent<Image>().sprite = itemInfo.ObjIcon;
+                slots[i].Find("Icon").GetComponent<Image>().color = new Color(255f, 255f, 255f, 255f);
+
+                slotOccupied[i] = true;
+                return;
+            }
+        }
+
+        Debug.Log("Inventory full");
+    }
+
+    private void UseItem()
+    {
+        int slotNum;
+        Debug.Log(currentSlot);
+
+        switch (currentSlot)
+        {
+            case Slots.Slot01:
+                slotNum = 0;
                 break;
 
-            case Slots.Slot2:
-                if (slot2Occupied) { return false; }
-                currentSlotIcon = slot2Icon;
-                slot2Occupied = true;
+            case Slots.Slot02:
+                slotNum = 1;
                 break;
 
-            case Slots.Slot3:
-                if (slot3Occupied) { return false; }
-                currentSlotIcon = slot3Icon;
-                slot3Occupied = true;
+            case Slots.Slot03:
+                slotNum = 2;
                 break;
 
             default:
-                Debug.LogError("No selected slot");
-                return false;
+                Debug.LogError("No variable matching");
+                return;
         }
 
-        switch (item)
+        if (!slotOccupied[slotNum]) { Debug.LogWarning("No item in slot"); return; }
+
+        switch (inventory[slotNum])
         {
             case "Soda":
-                
+                Debug.Log("Use Soda");
+                RemoveItem(slotNum);
+                break;
+
+            case "Candy Bar":
+                Debug.Log("Use Candy Bar");
                 break;
         }
+    }
+
+    private void RemoveItem(int index)
+    {
+        inventory[index] = "null";
+        slots[index].Find("Icon").GetComponent<Image>().sprite = null;
+        slots[index].Find("Icon").GetComponent<Image>().color = new Color(255f, 255f, 255f, 0f);
+
+        Destroy(slots[index].Find("ItemHolder").GetChild(0).gameObject);
+        slotOccupied[index] = false;
     }
 
     private void UpdateSelection(string slot)
@@ -135,24 +174,24 @@ public class InventoryManager : MonoBehaviour
         switch (slot)
         {
             case "Slot1":
-                selectedSlot = Slots.Slot1;
-                slot1.GetComponent<Image>().color = selectionColor;
-                slot2.GetComponent<Image>().color = defaultColor;
-                slot3.GetComponent<Image>().color = defaultColor;
+                currentSlot = Slots.Slot01;
+                slots[0].GetComponent<Image>().color = selectionColor;
+                slots[1].GetComponent<Image>().color = defaultColor;
+                slots[2].GetComponent<Image>().color = defaultColor;
                 break;
 
             case "Slot2":
-                selectedSlot = Slots.Slot2;
-                slot1.GetComponent<Image>().color = defaultColor;
-                slot2.GetComponent<Image>().color = selectionColor;
-                slot3.GetComponent<Image>().color = defaultColor;
+                currentSlot = Slots.Slot02;
+                slots[0].GetComponent<Image>().color = defaultColor;
+                slots[1].GetComponent<Image>().color = selectionColor;
+                slots[2].GetComponent<Image>().color = defaultColor;
                 break;
 
             case "Slot3":
-                selectedSlot = Slots.Slot3;
-                slot1.GetComponent<Image>().color = defaultColor;
-                slot2.GetComponent<Image>().color = defaultColor;
-                slot3.GetComponent<Image>().color = selectionColor;
+                currentSlot = Slots.Slot03;
+                slots[0].GetComponent<Image>().color = defaultColor;
+                slots[1].GetComponent<Image>().color = defaultColor;
+                slots[2].GetComponent<Image>().color = selectionColor;
                 break;
         }
     }

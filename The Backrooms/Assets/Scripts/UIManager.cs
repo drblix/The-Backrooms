@@ -14,6 +14,9 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     private Gradient loadingBarColor;
 
+    private bool gamePaused;
+    public bool GamePaused { get { return gamePaused; } }
+
     private bool canPause = false;
 
     private bool gameLoaded = false;
@@ -26,6 +29,7 @@ public class UIManager : MonoBehaviour
         pauseScreen = transform.GetChild(2).gameObject;
 
         pauseScreen.transform.GetChild(2).GetComponent<Toggle>().isOn = PlayerCamera.cameraInverted;
+        gamePaused = false;
     }
 
     private void Update()
@@ -39,6 +43,7 @@ public class UIManager : MonoBehaviour
         {
             if (canPause)
             {
+                gamePaused = true;
                 Cursor.lockState = CursorLockMode.None;
 
                 Time.timeScale = 0f;
@@ -54,6 +59,7 @@ public class UIManager : MonoBehaviour
 
     public void Resume()
     {
+        gamePaused = false;
         Cursor.lockState = CursorLockMode.Locked;
 
         Time.timeScale = 1f;
