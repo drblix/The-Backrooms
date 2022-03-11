@@ -13,6 +13,9 @@ public class InventoryManager : MonoBehaviour
     [Header("Config")]
 
     [SerializeField]
+    private Transform itemDropArea;
+
+    [SerializeField]
     private Transform[] slots = new Transform[3];
 
     [SerializeField]
@@ -23,6 +26,7 @@ public class InventoryManager : MonoBehaviour
         "null",
     };
     // 1 = Slot 1; 2 = Slot 2; 3 = Slot 3
+
     [SerializeField]
     private bool[] slotOccupied = new bool[3]
     {
@@ -30,9 +34,6 @@ public class InventoryManager : MonoBehaviour
         false,
         false,
     };
-
-    [SerializeField]
-    private Transform itemDropArea;
 
     private readonly string[] items = new string[]
     {
@@ -49,10 +50,23 @@ public class InventoryManager : MonoBehaviour
 
     private Slots currentSlot = Slots.Slot01;
 
+    [Header("Sounds")]
+
+    private AudioSource audioSrc;
+
+    [SerializeField]
+    private AudioClip pickUp;
+    [SerializeField]
+    private AudioClip drinking;
+    [SerializeField]
+    private AudioClip wrapper;
+
     //// ^^^ Variables ^^^ ////
 
     private void Awake()
     {
+        audioSrc = GetComponent<AudioSource>();
+
         slots[0].GetComponent<Image>().color = selectionColor;
         slots[0].Find("Icon").GetComponent<Image>().color = new Color(255f, 255f, 255f, 0f);
         slots[1].Find("Icon").GetComponent<Image>().color = new Color(255f, 255f, 255f, 0f);
@@ -113,14 +127,30 @@ public class InventoryManager : MonoBehaviour
         {
             if (!slotOccupied[i])
             {
+                GameObject prevParent;
+
+                try
+                {
+                    prevParent = itemInfo.transform.parent.gameObject;
+                }
+                catch (System.Exception)
+                {
+                    prevParent = null;
+                }
+
                 inventory[i] = itemInfo.ObjName;
                 itemInfo.gameObject.SetActive(false);
                 itemInfo.transform.parent = slots[i].Find("ItemHolder");
+
+                if (prevParent != null) { Destroy(prevParent); }
 
                 slots[i].Find("Icon").GetComponent<Image>().sprite = itemInfo.ObjIcon;
                 slots[i].Find("Icon").GetComponent<Image>().color = new Color(255f, 255f, 255f, 255f);
 
                 slotOccupied[i] = true;
+
+                audioSrc.clip = pickUp;
+                audioSrc.Play();
                 return;
             }
         }
@@ -142,10 +172,18 @@ public class InventoryManager : MonoBehaviour
                 PlayerMovement plrMovement = FindObjectOfType<PlayerMovement>();
                 plrMovement.StartCoroutine(plrMovement.StaminaPowerup(4f));
                 RemoveItem(slotNum, false);
+
+                audioSrc.clip = drinking;
+                audioSrc.Play();
                 break;
 
             case "Candy Bar":
                 Debug.Log("Use Candy Bar");
+                // Candy bar function goes here
+                RemoveItem(slotNum, false);
+
+                audioSrc.clip = wrapper;
+                audioSrc.Play();
                 break;
         }
     }
