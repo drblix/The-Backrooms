@@ -27,16 +27,17 @@ public class SpawnPoint : MonoBehaviour
 
     private void Start()
     {
-        Invoke(nameof(CreateRoom), waitTime);
+        StartCoroutine(CreateRoom());
     }
 
-    private void CreateRoom()
+    private IEnumerator CreateRoom()
     {
+        yield return new WaitForSeconds(waitTime);
         if (!occupied)
         {
             GameObject room = roomManager.SelectRoom(doorOpening);
 
-            if (room == null) { return; }
+            if (room == null) { yield break; }
 
             Instantiate(room, transform.position, room.transform.rotation, roomsMasterParent);
 

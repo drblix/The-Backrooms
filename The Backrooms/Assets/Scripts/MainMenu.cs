@@ -13,17 +13,15 @@ public class MainMenu : MonoBehaviour
 
     [SerializeField]
     private TMP_InputField inputField;
-
-    [Range(50, 1000)]
+    
+    [Range(250, 2000)]
     public static int enteredRoomsToGenerate;
 
     [SerializeField] [Min(2f)]
     private float rotateSpeed;
 
-    [SerializeField]
-    private int maximumRooms;
-    [SerializeField]
-    private int minimumRooms;
+    private readonly int maximumRooms = 2500;
+    private readonly int minimumRooms = 250;
 
     private void Awake()
     {

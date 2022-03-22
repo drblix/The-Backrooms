@@ -41825,7 +41825,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "Enter amount of \nrooms to generate\n(50-1000)"
+  m_text: "Enter amount of \nrooms to generate\n(250-2000)"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -53359,8 +53359,6 @@ MonoBehaviour:
   eventCam: {fileID: 1980828103}
   inputField: {fileID: 1888585050}
   rotateSpeed: 8
-  maximumRooms: 1000
-  minimumRooms: 50
 --- !u!43 &1644293584
 Mesh:
   m_ObjectHideFlags: 0
@@ -61482,7 +61480,7 @@ MonoBehaviour:
   m_CharacterValidation: 2
   m_RegexValue: 
   m_GlobalPointSize: 28
-  m_CharacterLimit: 4
+  m_CharacterLimit: 5
   m_OnEndEdit:
     m_PersistentCalls:
       m_Calls: []

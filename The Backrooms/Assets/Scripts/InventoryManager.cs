@@ -71,8 +71,6 @@ public class InventoryManager : MonoBehaviour
         slots[0].Find("Icon").GetComponent<Image>().color = new Color(255f, 255f, 255f, 0f);
         slots[1].Find("Icon").GetComponent<Image>().color = new Color(255f, 255f, 255f, 0f);
         slots[2].Find("Icon").GetComponent<Image>().color = new Color(255f, 255f, 255f, 0f);
-
-        Debug.Log(inventory.Length);
     }
 
     private void Update()

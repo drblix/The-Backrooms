@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 
 public class RoomManager : MonoBehaviour
 {
@@ -16,7 +17,7 @@ public class RoomManager : MonoBehaviour
     [SerializeField]
     private GameObject closedRoom;
 
-    [SerializeField] [Min(50)]
+    [SerializeField] [Min(250)]
     private int roomsToMake;
 
     private int roomsLeft;
